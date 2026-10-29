@@ -13,7 +13,13 @@ class DashboardController extends Controller
             ['judul' => 'Mahasiswa', 'jumlah' => 1250, 'ikon' => 'bi-mortarboard-fill', 'warna' => 'primary'],
             ['judul' => 'Dosen', 'jumlah' => 68, 'ikon' => 'bi-person-badge-fill', 'warna' => 'success'],
             ['judul' => 'Mata Kuliah', 'jumlah' => 94, 'ikon' => 'bi-book-fill', 'warna' => 'warning'],
-            ['judul' => 'KRS Aktif', 'jumlah' => 842, 'ikon' => 'bi-journal-check', 'warna' => 'info'],
+            ['judul' => 'KRS Aktif', 'jumlah' => 842, 'ikon' => 'bi-journal-check', 'warna' => 'info'], 
+            [
+            'judul' => 'Rata-rata SKS', 
+            'jumlah' => '21.5', 
+            'ikon' => 'bi-bar-chart', 
+            'warna' => 'secondary'
+            ],
         ];
 
         $kolomKrs = [
