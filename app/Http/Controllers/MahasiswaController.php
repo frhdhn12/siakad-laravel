@@ -2,45 +2,36 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use Illuminate\View\View;
+use App\Models\Mahasiswa;
+use Yajra\DataTables\Facades\DataTables;
 
 class MahasiswaController extends Controller
 {
     public function index(): View
     {
-        $kolom = [
-            'nim' => 'NIM', 'nama' => 'Nama Lengkap',
-            'angkatan' => 'Angkatan', 'email' => 'Email',
-            'status' => 'Status',
-        ];
-
-        $mahasiswa = [
-            ['nim' => '2401001', 'nama' => 'Ahmad Fauzi', 'angkatan' => 2024, 'email' => 'ahmad.fauzi@contoh.ac.id', 'status' => 'Aktif'],
-            ['nim' => '2401002', 'nama' => 'Siti Rahmawati', 'angkatan' => 2024, 'email' => 'siti.rahmawati@contoh.ac.id', 'status' => 'Aktif'],
-            ['nim' => '2301005', 'nama' => 'Budi Santoso', 'angkatan' => 2023, 'email' => 'budi.santoso@contoh.ac.id', 'status' => 'Aktif'],
-            ['nim' => '2301012', 'nama' => 'Dewi Lestari', 'angkatan' => 2023, 'email' => 'dewi.lestari@contoh.ac.id', 'status' => 'Drop Out'],
-            ['nim' => '2201020', 'nama' => 'Rizky Pratama', 'angkatan' => 2022, 'email' => 'rizky.pratama@contoh.ac.id', 'status' => 'Lulus'],
-        ];
-
-        return view('mahasiswa.index', compact('kolom', 'mahasiswa'));
+        return view('mahasiswa.index');
     }
 
-    public function show($nim): View
+    public function data(Request $request)
     {
-        $daftarMahasiswa = [
-            '2401001' => ['nim' => '2401001', 'nama' => 'Ahmad Fauzi', 'prodi' => 'D3 Teknik Informatika', 'angkatan' => 2024, 'email' => 'ahmad.fauzi@contoh.ac.id', 'status' => 'Aktif'],
-            '2401002' => ['nim' => '2401002', 'nama' => 'Siti Rahmawati', 'prodi' => 'D3 Teknik Informatika', 'angkatan' => 2024, 'email' => 'siti.rahmawati@contoh.ac.id', 'status' => 'Aktif'],
-            '2301005' => ['nim' => '2301005', 'nama' => 'Budi Santoso', 'prodi' => 'D3 Teknik Informatika', 'angkatan' => 2023, 'email' => 'budi.santoso@contoh.ac.id', 'status' => 'Aktif'],
-            '2301012' => ['nim' => '2301012', 'nama' => 'Dewi Lestari', 'prodi' => 'D3 Teknik Informatika', 'angkatan' => 2023, 'email' => 'dewi.lestari@contoh.ac.id', 'status' => 'Drop Out'],
-            '2201020' => ['nim' => '2201020', 'nama' => 'Rizky Pratama', 'prodi' => 'D3 Teknik Informatika', 'angkatan' => 2022, 'email' => 'rizky.pratama@contoh.ac.id', 'status' => 'Lulus'],
-        ];
-
-        if (!array_key_exists($nim, $daftarMahasiswa)) {
-            abort(404);
+        if ($request->ajax()) {
+            $data = Mahasiswa::select(['id', 'nim', 'nama', 'angkatan', 'email']);
+            
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('action', function($row){
+                    $btn = '<a href="'.route('mahasiswa.show', $row->nim).'" class="btn btn-info btn-sm me-1">Detail</a>';
+                    $btn .= '<a href="'.route('mahasiswa.edit', $row->nim).'" class="btn btn-warning btn-sm me-1">Edit</a>';
+                    $btn .= '<form action="'.route('mahasiswa.destroy', $row->nim).'" method="POST" class="d-inline" onsubmit="return confirm(\'Yakin ingin menghapus data ini?\')">';
+                    $btn .= csrf_field() . method_field('DELETE');
+                    $btn .= '<button type="submit" class="btn btn-danger btn-sm">Hapus</button>';
+                    $btn .= '</form>';
+                    return $btn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
         }
-
-        $mahasiswa = $daftarMahasiswa[$nim];
-
-        return view('mahasiswa.show', compact('mahasiswa'));
     }
 }

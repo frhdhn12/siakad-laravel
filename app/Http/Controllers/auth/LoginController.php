@@ -41,6 +41,11 @@ class LoginController extends Controller
             RateLimiter::clear($key);
             $request->session()->regenerate();
 
+            // Memperbarui waktu login terakhir (last_login_at)
+            $user = Auth::user();
+            $user->last_login_at = now();
+            $user->save();
+
             $pesan = 'Login berhasil. Selamat datang, ' . Auth::user()->name . '.';
 
             return redirect()->intended(route('dashboard'))->with('success', $pesan);

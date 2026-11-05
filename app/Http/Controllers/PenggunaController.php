@@ -10,16 +10,17 @@ class PenggunaController extends Controller
 {
     public function index(): View
     {
-
         $kolom = [
-            'nama' => 'Nama', 'email' => 'Email', 'role' => 'Peran'
+            'name'          => 'Nama', 
+            'email'         => 'Email', 
+            'role'          => 'Peran',
+            'last_login_at' => 'Login Terakhir', // Menambahkan kolom baru
         ];
 
-
-        $pengguna = User::orderBy('nama')
-            ->get(['name', 'email', 'role'])
+        $pengguna = User::orderBy('name')
+            ->get(['name', 'email', 'role', 'last_login_at']) // Menyertakan last_login_at
             ->toArray();
-        
+
         return view('pengguna.index', compact('kolom', 'pengguna'));
-}
+    }
 }

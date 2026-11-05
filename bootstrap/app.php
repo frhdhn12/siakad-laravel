@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EnsureUserHasRole;
+use App\Http\Middleware\PreventBackHistory; // Jangan lupa tambahkan use ini di atas
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -9,7 +10,7 @@ use Illuminate\Http\Request;
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
-        commands: __DIR__.'/../routes/console.php',
+        commands: __DIR__.'/../console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
@@ -19,9 +20,10 @@ return Application::configure(basePath: dirname(__DIR__))
         // Pengguna login yang membuka halaman khusus tamu dialihkan ke sini
         $middleware->redirectUsersTo(fn () => route('dashboard'));
 
-        // Mendaftarkan alias middleware peran (role)
+        // Mendaftarkan alias middleware peran (role) dan prevent-back-history
         $middleware->alias([
             'role' => EnsureUserHasRole::class,
+            'prevent-back-history' => PreventBackHistory::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
