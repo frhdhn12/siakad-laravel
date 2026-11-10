@@ -6,16 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::create('krs_detail', function (Blueprint $table) {
             $table->id();
             $table->foreignId('krs_id')
-                  ->constrained('krs')
-                  ->cascadeOnDelete();
+                ->constrained('krs')
+                ->cascadeOnDelete();
             $table->foreignId('mata_kuliah_id')
-                  ->constrained('mata_kuliah')
-                  ->restrictOnDelete();
+                ->constrained('mata_kuliah')
+                ->cascadeOnDelete(); // Diubah dari restrictOnDelete() ke cascadeOnDelete()
             $table->timestamps();
 
             // Mencegah mata kuliah yang sama diambil dua kali dalam satu KRS
@@ -23,6 +26,9 @@ return new class extends Migration
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('krs_detail');

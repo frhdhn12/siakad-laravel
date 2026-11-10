@@ -13,17 +13,11 @@ use Yajra\DataTables\Facades\DataTables;
 
 class DosenController extends Controller
 {
-    /**
-     * Menampilkan halaman index daftar dosen.
-     */
     public function index(): View
     {
         return view('dosen.index');
     }
 
-    /**
-     * Menyediakan data JSON untuk DataTables.
-     */
     public function data(): JsonResponse
     {
         $dosen = Dosen::select(['id', 'nidn', 'nama', 'email', 'telepon']);
@@ -31,28 +25,36 @@ class DosenController extends Controller
         return DataTables::of($dosen)
             ->addIndexColumn()
             ->addColumn('aksi', function ($row) {
-                $btn = '<a href="'.route('dosen.show', $row->id).'" class="btn btn-info btn-sm me-1">Detail</a>';
-                $btn .= '<a href="'.route('dosen.edit', $row->id).'" class="btn btn-warning btn-sm me-1">Edit</a>';
-                $btn .= '<button type="button" class="btn btn-danger btn-sm btn-hapus" data-url="'.route('dosen.destroy', $row->id).'" data-nama="'.$row->nama.'">Hapus</button>';
+                // Tombol Detail selalu tampil untuk semua role
+                $btn  = '<a href="'.route('dosen.show', $row->id).'" class="btn btn-info btn-sm me-1 text-white" title="Detail"><i class="bi bi-eye"></i></a>';
+                
+                // Tombol Edit & Hapus hanya tampil jika role adalah admin
+                if (auth()->check() && auth()->user()->role === 'admin') {
+                    $btn .= '<a href="'.route('dosen.edit', $row->id).'" class="btn btn-warning btn-sm me-1 text-white" title="Edit"><i class="bi bi-pencil-square"></i></a>';
+                    $btn .= '<button type="button" class="btn btn-danger btn-sm btn-hapus" data-id="'.$row->id.'" data-nama="'.e($row->nama).'" title="Hapus"><i class="bi bi-trash"></i></button>';
+                }
+                
                 return $btn;
             })
             ->rawColumns(['aksi'])
             ->make(true);
     }
 
-    /**
-     * Menampilkan form tambah dosen.
-     */
     public function create(): View
     {
+        if (auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized action.');
+        }
+
         return view('dosen.create');
     }
 
-    /**
-     * Menyimpan data dosen baru ke database.
-     */
     public function store(Request $request): RedirectResponse
     {
+        if (auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized action.');
+        }
+
         Dosen::create($this->validated($request));
 
         return redirect()
@@ -60,27 +62,26 @@ class DosenController extends Controller
             ->with('success', 'Data dosen berhasil ditambahkan.');
     }
 
-    /**
-     * Menampilkan detail data dosen.
-     */
     public function show(Dosen $dosen): View
     {
         return view('dosen.show', compact('dosen'));
     }
 
-    /**
-     * Menampilkan form edit dosen.
-     */
     public function edit(Dosen $dosen): View
     {
+        if (auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized action.');
+        }
+
         return view('dosen.edit', compact('dosen'));
     }
 
-    /**
-     * Memperbarui data dosen di database.
-     */
     public function update(Request $request, Dosen $dosen): RedirectResponse
     {
+        if (auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized action.');
+        }
+
         $dosen->update($this->validated($request, $dosen));
 
         return redirect()
@@ -88,11 +89,12 @@ class DosenController extends Controller
             ->with('success', 'Data dosen ' . $dosen->nama . ' berhasil diperbarui.');
     }
 
-    /**
-     * Menghapus data dosen.
-     */
     public function destroy(Dosen $dosen): JsonResponse
     {
+        if (auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized action.');
+        }
+
         try {
             $dosen->delete();
         } catch (QueryException $e) {
@@ -106,9 +108,6 @@ class DosenController extends Controller
         ]);
     }
 
-    /**
-     * Aturan validasi bersama untuk store dan update.
-     */
     private function validated(Request $request, ?Dosen $dosen = null): array
     {
         return $request->validate([

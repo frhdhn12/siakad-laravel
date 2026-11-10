@@ -5,11 +5,8 @@
     <title>@yield('title', 'SIAKAD') | {{ config('app.name') }}</title>
     <link href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('vendor/bootstrap-icons/bootstrap-icons.min.css') }}" rel="stylesheet">
-    <!-- DataTables Bootstrap 5 CSS -->
     <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     <link href="{{ asset('css/siakad.css') }}" rel="stylesheet">
-    
-    <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
     @stack('styles')
@@ -26,7 +23,7 @@
                 @yield('content')
 
                 <footer class="text-center text-body-secondary small mt-5">
-                    &copy; {{ date('Y') }} {{ config('app.name') }} 
+                    &copy; {{ date('Y') }} {{ config('app.name') }}
                     - D3 Teknik Informatika
                 </footer>
             </main>
@@ -34,10 +31,9 @@
     </div>
 
     <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <!-- DataTables JS & Bootstrap 5 Integration -->
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-    
+
     <script src="{{ asset('vendor/sweetalert2/sweetalert2.all.min.js') }}"></script>
     <script>
         const Toast = Swal.mixin({

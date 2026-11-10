@@ -18,16 +18,24 @@
                             <td>: {{ $mahasiswa['nim'] }}</td>
                         </tr>
                         <tr>
-                            <th>Nama</th>
+                            <th>Nama Lengkap</th>
                             <td>: {{ $mahasiswa['nama'] }}</td>
                         </tr>
                         <tr>
+                            <th>Jenis Kelamin</th>
+                            <td>: {{ $mahasiswa['jenis_kelamin'] == 'L' ? 'Laki-laki' : 'Perempuan' }}</td>
+                        </tr>
+                        <tr>
                             <th>Program Studi</th>
-                            <td>: {{ $mahasiswa['prodi'] }}</td>
+                            <td>: {{ $mahasiswa['program_studi'] }}</td>
                         </tr>
                         <tr>
                             <th>Angkatan</th>
                             <td>: {{ $mahasiswa['angkatan'] }}</td>
+                        </tr>
+                        <tr>
+                            <th>Email</th>
+                            <td>: {{ $mahasiswa['email'] }}</td>
                         </tr>
                     </table>
                 </div>

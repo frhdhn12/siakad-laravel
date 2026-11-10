@@ -18,15 +18,13 @@ Route::middleware('guest')->group(function () {
 
     Route::post('/login', function (Request $request) {
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
+            'email'     => ['required', 'email'],
+            'password'  => ['required'],
         ]);
-
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             return redirect()->intended('dashboard');
         }
-
         return back()->withErrors([
             'email' => 'Email atau password salah.',
         ]);
@@ -35,7 +33,6 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware(['auth', 'prevent-back-history'])->group(function () {
     Route::get('/', fn () => redirect()->route('dashboard'));
-
     Route::post('/logout', function (Request $request) {
         Auth::logout();
         $request->session()->invalidate();
@@ -46,11 +43,9 @@ Route::middleware(['auth', 'prevent-back-history'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
 
-    // Endpoint AJAX & Resource Mahasiswa
     Route::get('/mahasiswa/data', [MahasiswaController::class, 'data'])->name('mahasiswa.data');
     Route::resource('mahasiswa', MahasiswaController::class);
 
-    // Dosen Routes
     Route::get('/dosen/data', [DosenController::class, 'data'])->name('dosen.data');
     Route::middleware('role:admin')->group(function () {
         Route::resource('dosen', DosenController::class)
@@ -58,8 +53,8 @@ Route::middleware(['auth', 'prevent-back-history'])->group(function () {
     });
     Route::resource('dosen', DosenController::class)
         ->only(['index', 'show']);
-        
-    // Endpoint AJAX & Resource Mata Kuliah (URL /mata-kuliah, tapi nama route menggunakan matakuliah.*)
+
+    // Route Mata Kuliah (disesuaikan dengan penamaan tanpa strip agar sesuai dengan view)
     Route::get('/mata-kuliah/data', [MataKuliahController::class, 'data'])->name('matakuliah.data');
     Route::resource('mata-kuliah', MataKuliahController::class)->names([
         'index'   => 'matakuliah.index',
@@ -71,12 +66,11 @@ Route::middleware(['auth', 'prevent-back-history'])->group(function () {
         'destroy' => 'matakuliah.destroy',
     ]);
 
-    Route::get('/krs', [KrsController::class, 'index'])
-        ->name('krs.index');
-        
-    Route::get('/pengguna', [PenggunaController::class, 'index'])
+    Route::resource('krs', KrsController::class);
+
+    Route::get('/pengguna', [PenggunaControlle::class, 'index'])
         ->middleware('role:admin')
         ->name('pengguna.index');
-        
+
     Route::get('/beranda', [BerandaController::class, 'index'])->name('beranda');
 });

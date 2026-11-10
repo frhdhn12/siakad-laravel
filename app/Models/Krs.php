@@ -9,19 +9,18 @@ class Krs extends Model
 {
     use HasFactory;
 
+    protected $table = 'krs';
+
     protected $fillable = [
         'mahasiswa_id',
         'tahun_akademik',
         'semester',
+        'status',
     ];
-
-    // Relasi ke Mahasiswa (belongsTo)
     public function mahasiswa()
     {
-        return $this->belongsTo(Mahasiswa::class);
+        return $this->belongsTo(Mahasiswa::class, 'mahasiswa_id', 'id');
     }
-
-    // Relasi ke Mata Kuliah melalui tabel perantara krs_detail (belongsToMany)
     public function mataKuliah()
     {
         return $this->belongsToMany(MataKuliah::class, 'krs_detail', 'krs_id', 'mata_kuliah_id');
